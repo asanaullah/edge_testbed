@@ -16,6 +16,14 @@ SW[1] : Reprogram  (active high)
 Programs need to be reloaded after a global reset (SW[0]) since the dram controller will overwrite some locations during callibration.
 Toggling Reporgram pin does a soft reset - program does not need to be reloaded  
 
+run ```make all``` to compile the design
+
+run ```make prog``` to program the FPGA
+
+run ```make load``` while SW[1] is high to load the program
+
+Interface the provided test program using the jupyter notebook: sw/interfaceOV.ipynb
+
 ___________________________________________
 
 Current work:

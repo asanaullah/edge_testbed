@@ -1,6 +1,8 @@
 # Edge Testbed
 
-Tested with Vivado v2017.2 and v2020.1
+Tested on the Arty A735T board
+
+Tested with Vivado v2017.2 and v2020.1 
 
 Supported camera module: Arducam 2MP Plus OV2640 Mini Module 
 

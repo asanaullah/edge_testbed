@@ -35,6 +35,8 @@ Current work:
 Future non-critical work:
 Parameterize the remaining data and address widths
 
+Known bug:
+  BRAM addressing in bram_axi.v should be converted from byte to word. Currently only using 1/4 of memory. 
 
 
 

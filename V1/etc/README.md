@@ -2,7 +2,7 @@ By default, udev assigns the enumerated USB devices to group plugdev, so first y
 
 ### Adding username to plugdev group if not already added
 
-1. `sudo usermod -a -G plugdev <YOUR USERNAME>`
+1. `sudo usermod -a -G plugdev <YOUR USERNAME>`  or `sudo usermod -a -G dialout <YOUR USERNAME>` depending on your distribution/OS
 2. Log out of Linux (sorry, this is necessary) 
 3. Log back in
 4. Run `groups` and check `plugdev` is listed

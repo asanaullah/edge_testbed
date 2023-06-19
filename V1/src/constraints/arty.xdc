@@ -80,24 +80,3 @@ set_property IOSTANDARD LVCMOS33 [get_ports i2c_sda_pup]
 set_property PACKAGE_PIN A13  [get_ports i2c_scl_pup]
 set_property IOSTANDARD LVCMOS33 [get_ports i2c_scl_pup]
 
-
-##SPIInterface
-set_property PACKAGE_PIN D15 [get_ports spi_miso]
-set_property IOSTANDARD LVCMOS33 [get_ports spi_miso]
-set_property PACKAGE_PIN E16   [get_ports spi_mosi]
-set_property IOSTANDARD LVCMOS33 [get_ports spi_mosi]
-set_property PACKAGE_PIN C15  [get_ports spi_clk]
-set_property IOSTANDARD LVCMOS33 [get_ports spi_clk]
-set_property PACKAGE_PIN E15  [get_ports spi_cs]
-set_property IOSTANDARD LVCMOS33 [get_ports spi_cs]		
-
-
-
-create_pblock pblock_cl
-add_cells_to_pblock [get_pblocks pblock_cl] [get_cells -quiet [list cl]]
-resize_pblock [get_pblocks pblock_cl] -add {SLICE_X8Y105:SLICE_X57Y144}
-resize_pblock [get_pblocks pblock_cl] -add {DSP48_X0Y42:DSP48_X1Y57}
-resize_pblock [get_pblocks pblock_cl] -add {RAMB18_X0Y42:RAMB18_X1Y57}
-resize_pblock [get_pblocks pblock_cl] -add {RAMB36_X0Y21:RAMB36_X1Y28}
-set_property CONTAIN_ROUTING 1 [get_pblocks pblock_cl]
-set_property EXCLUDE_PLACEMENT 1 [get_pblocks pblock_cl]                              

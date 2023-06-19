@@ -1,4 +1,4 @@
-open_project rv_img_proc_demo.xpr
+open_project rv_comms_proc_demo.xpr
 
 update_compile_order -fileset sources_1
 

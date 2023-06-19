@@ -102,16 +102,17 @@ void puts(char* s)
 void main(void)
 {
   int count = 0;
+  int data = 55;
   const int restart = 99;
 
   while (1)
   {
-    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d}\"}",count);
-    putchar(0x04);
-    sleep(1000000);
-    count = (++count==restart)?0:count;
 #if 1
-	count++;
+    data = read_i2c(0xD0);
+    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d,%d}\"}",data,count);
+    printf("\r\n");
+    putchar(0x0D);
+    count = (++count==restart)?0:count;
 #else
 	write_led(1);
 	cmd = read_uart();			// get command from UART

@@ -21,7 +21,7 @@ module sensor_axi(
 	output sda_sel,
 	output scl
 );
-	parameter I2C_ADDR = 8'h60;
+	parameter I2C_ADDR = 8'h76;
 
 	wire clk_i2c;
 	clk_gen clks (.rst(rst), .clk_83M(clk), .clk_i2c(clk_i2c));

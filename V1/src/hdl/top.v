@@ -608,7 +608,7 @@ module top
 	assign i2c_sda_pup = 1'b1;
 	assign i2c_scl_pup = 1'b1;
 	IOBUF sd(.T(i2c_sda_sel),.IO(i2c_sda),.I(i2c_sda_out),.O(i2c_sda_in) );
-	sensor_axi #(.I2C_ADDR(8'h60)) sensor
+	sensor_axi #(.I2C_ADDR(8'h76)) sensor
   	(
 		.clk(ui_clk),
 		.rst(ui_rst | reprogram),

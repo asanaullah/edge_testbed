@@ -104,13 +104,39 @@ void main(void)
   int count = 0;
   int data = 55;
   const int restart = 99;
+  int digT1msb, digT1lsb, digT2msb, digT2lsb, digT3msb, digT3lsb;
+  int digT1, digT2, digT3;
+  int temp[3]; int temp_reading;
+  int var1; int var2;
+  int temp_comp;
+
+  digT1lsb = read_i2c(0x88); digT1msb = read_i2c(0x89);
+  digT1 = ((digT1msb & 0x000000FF)<<8) | (digT1lsb & 0x000000FF);
+
+  digT2lsb = read_i2c(0x8A); digT2msb = read_i2c(0x8B);
+  digT2 = ((digT2msb & 0x000000FF)<<8) | (digT2lsb & 0x000000FF);
+
+  digT3lsb = read_i2c(0x8C); digT3msb = read_i2c(0x8D);
+  digT3 = ((digT3msb & 0x000000FF)<<8) | (digT3lsb & 0x000000FF);
 
   while (1)
   {
 #if 1
     data = read_i2c(0xD0);
     data &= 0x000000FF;
-    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d,%d}\"}",data,count);
+    temp[0] = read_i2c(0xFA); temp[0] &= 0x000000FF;
+    temp[1] = read_i2c(0xFB); temp[1] &= 0x000000FF;
+    temp[2] = read_i2c(0xFC); temp[2] &= 0x0000000F;
+
+    temp_reading = (temp[0] >> 20) | (temp[1] >> 12) | temp[2];
+
+    var1 = ((((temp_reading>>3) - (digT1<<1))) * digT2) >> 11;
+    var2 = (((((temp_reading>>4) - digT1) * ((temp_reading>>4) - digT1)) >> 12 ) * digT3) >>14;
+    temp_comp = ((var1+var2)*5 + 128) >> 8;
+
+    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"sensor_id\\\":%d,%d}\"}",data,count);
+    printf("\r\n");
+    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d,%d}\"}",temp_comp,count);
     printf("\r\n");
     putchar(0x0D);
     count = (++count==restart)?0:count;

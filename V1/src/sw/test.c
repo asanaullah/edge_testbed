@@ -109,6 +109,7 @@ void main(void)
   {
 #if 1
     data = read_i2c(0xD0);
+    data &= 0x000000FF;
     printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d,%d}\"}",data,count);
     printf("\r\n");
     putchar(0x0D);

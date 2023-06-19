@@ -1,19 +1,118 @@
 #include "mmio.h"
+#include <stdarg.h>
 
+extern int debug asm ("DEBUG");
+extern int timer asm ("TIMER");
+const char digits[16] = {'0','1','2','3','4','5','6','7','8','9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-#define frameWidth 320
-#define frameHeight 240
-#define bytesPerPixel 2
-#define buffSize frameHeight*frameWidth*bytesPerPixel
+void sleep(int microseconds)
+{
+  int start = timer;
+  while ((timer-start) < microseconds);
+}
 
+void prints(char *str)
+{
+  int i=0;
 
-void main(void){
-int ddr [buffSize];
-int i = 0;
-int burst_size;
-int cmd;
+  while((int)str[i] !=0)
+  {
+    debug = str[i];
+    i = i+1;
+  }
+}
 
-while (1){
+void printi(int val)
+{
+  if(val==0)
+  {
+    debug = '0';
+    return;
+  }
+
+  if(val<0)
+  {
+    debug = '-';
+    val = val*-1;
+  }
+
+  int num[10];
+
+  for(int i=0;i<10;i++)
+  {
+    num[i] = val - 10*(val/10);
+    val = val/10;
+  }
+
+  int start = 0;
+
+  for (int i=10; i>0; i--)
+  {
+    if(start)
+      debug = digits[num[i-1]];
+    else if(num[i-1] > 0)
+    {
+      debug = digits[num[i-1]];
+      start = 1;
+    }
+    else
+      debug = 0;
+  }
+}
+
+void printf(char *c, ...)
+{
+  char *s;
+  va_list lst;
+  va_start(lst, c);
+
+  while(*c != '\0')
+  {
+    if(*c != '%')
+    {
+      debug = *c;
+      c++;
+      continue;
+    }
+
+    c++;
+
+    if(*c == '\0')
+      break;
+
+    switch(*c)
+    {
+      case 's': prints(va_arg(lst, char *)); break;
+      case 'd': printi(va_arg(lst, int)); break;
+    }
+    c++;
+  }
+}
+
+void putchar(int c)
+{
+  debug = c;
+}
+
+void puts(char* s)
+{
+  prints(s);
+}
+
+void main(void)
+{
+  int count = 0;
+  const int restart = 99;
+
+  while (1)
+  {
+    printf("{\"topic\":\"sensor\",\"message\":\"{\\\"temperature\\\":%d}\"}",count);
+    putchar(0x04);
+    sleep(1000000);
+    count = (++count==restart)?0:count;
+#if 1
+	count++;
+#else
 	write_led(1);
 	cmd = read_uart();			// get command from UART
 	write_led(0);
@@ -134,6 +233,7 @@ while (1){
 		int d2 = read_uart();
 		write_uart(cl(d1,d2));
 	}
+#endif
 }
 return;
 }

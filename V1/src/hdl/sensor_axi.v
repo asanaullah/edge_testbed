@@ -1,4 +1,4 @@
-module camera_axi(
+module sensor_axi(
     input clk,
     input rst,
 	input [31:0] 			axi_araddr,
@@ -25,7 +25,6 @@ module camera_axi(
 
 	wire clk_i2c;
 	clk_gen clks (.rst(rst), .clk_83M(clk), .clk_i2c(clk_i2c));
-	
 	
 	reg i2c_start_trigger;
 	reg [7:0] i2c_tx_data;

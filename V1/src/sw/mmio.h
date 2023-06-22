@@ -1,11 +1,12 @@
 #define 	GPIO 		0x10000000	
 #define 	UART		0x10000018 
 #define 	I2C		0x1000001C  
-#define 	SPI		0x1000041C  
-#define 	CL		0x1000081C  
+// #define 	SPI		0x1000041C  
+// #define 	CL		0x1000081C  
 
 #define memorder 0
 
+/*
 int _c2i(int a, int b, int c, int d){
 	int _a;
 	_a = a << 8;
@@ -44,7 +45,7 @@ int cl(int a, int b){
 		done = (__atomic_load_n((int*)CL, memorder) >> 1) & 1;
 	return __atomic_load_n((int*)(CL + 0x20), memorder);
 }				  
-
+*/
 
 
 void write_led(int val){
@@ -79,7 +80,7 @@ int read_i2c(int index){
 	//return (*((int*) I2C + index));
 }	
 
-
+/*
 void write_spi(int index, int val){
 	__atomic_store_n((int*)SPI + index, val, memorder);
 	//*((int*)SPI + index) = val;
@@ -89,3 +90,4 @@ int read_spi(int index){
 	return (__atomic_load_n((int*)SPI + index, memorder));
 	//return (*((int*) SPI + index));
 }	
+*/

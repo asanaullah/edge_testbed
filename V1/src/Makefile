@@ -1,4 +1,4 @@
-PROJECT = rv_img_proc_demo
+PROJECT = rv_comms_proc_demo
 VERILOG_TOP = top
 
 .PHONY: all

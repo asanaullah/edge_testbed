@@ -14,7 +14,7 @@ UART_PORT = ttyUSB1
 all:	$(OUTPUT_NAME).hex
 
 $(OUTPUT_NAME).elf:$(SOURCE)
-	$(CROSS)gcc $(CROSSCFLAGS) -c  -o     cpu_reset_handler.o Reset_Handler.S
+	$(CROSS)gcc $(CROSSCFLAGS) -c  -o     cpu_reset_handler.o cpu_reset_handler.S
 	$(CROSS)gcc $(CROSSLDFLAGS) -Wl,-T $(LINKER) -o $@     $<  muldi3.S div.S
 
 #$(OUTPUT_NAME).o: $(SOURCE)

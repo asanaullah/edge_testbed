@@ -1,4 +1,4 @@
-create_project -force rv_img_proc_demo . -part xc7a35ticsg324-1L
+create_project -force rv_comms_proc_demo . -part xc7a35ticsg324-1L
 add_files -scan_for_includes ../hdl/
 update_compile_order -fileset sources_1
 

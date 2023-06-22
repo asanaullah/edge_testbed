@@ -25,4 +25,4 @@ prog:
 
 .PHONY: clean
 clean:
-	rm -rf rv_img_proc_demo.*
+	rm -rf rv_comms_proc_demo.*

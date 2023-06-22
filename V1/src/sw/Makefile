@@ -2,8 +2,9 @@ SOURCE	= test.c
 OUTPUT_NAME = firmware
 CONFIG = rv32i
 ABI = ilp32
-LINKER = firmware.ld
-CROSS = riscv64-linux-gnu-
+LINKER = cpu_linker.ld
+#LINKER = firmware.ld
+CROSS = riscv64-unknown-elf-
 CROSSCFLAGS = -O3 -Wno-int-conversion -march=$(CONFIG) -mabi=$(ABI) -ffreestanding -nostdlib
 CROSSLDFLAGS = -march=$(CONFIG) -mabi=$(ABI) -ffreestanding -nostdlib  -Wl,-M
 UART_PORT = ttyUSB1
@@ -12,12 +13,15 @@ UART_PORT = ttyUSB1
 .PHONY: all
 all:	$(OUTPUT_NAME).hex
 
+$(OUTPUT_NAME).elf:$(SOURCE)
+	$(CROSS)gcc $(CROSSCFLAGS) -c  -o     cpu_reset_handler.o Reset_Handler.S
+	$(CROSS)gcc $(CROSSLDFLAGS) -Wl,-T $(LINKER) -o $@     $<  muldi3.S div.S
 
-$(OUTPUT_NAME).o: $(SOURCE)
-	$(CROSS)gcc $(CROSSCFLAGS) -c -o $@  $<
+#$(OUTPUT_NAME).o: $(SOURCE)
+#	$(CROSS)gcc $(CROSSCFLAGS) -c -o $@  $<
 	
-$(OUTPUT_NAME).elf: $(OUTPUT_NAME).o
-	$(CROSS)gcc $(CROSSLDFLAGS) -T $(LINKER) -o $@   Reset_Handler.S $<
+#$(OUTPUT_NAME).elf: $(OUTPUT_NAME).o
+#	$(CROSS)gcc $(CROSSLDFLAGS) -T $(LINKER) -o $@   Reset_Handler.S $<
 	
     
 $(OUTPUT_NAME).hex: $(OUTPUT_NAME).elf

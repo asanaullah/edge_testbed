@@ -2,11 +2,11 @@ PROJECT = rv_img_proc_demo
 VERILOG_TOP = top
 
 .PHONY: all
-all:	check_vivado hls proj ip compile prog sw
+all:	check_vivado proj ip compile prog sw
 
 
 .PHONY: hw
-hw:	check_vivado hls proj ip compile prog
+hw:	check_vivado proj ip compile prog
 
 
 .PHONY: check_vivado
@@ -20,13 +20,11 @@ check_tcls:
 	$(call checkfile,./project/tcl/create_ip.tcl)
 	$(call checkfile,./project/tcl/create_project.tcl)
 	$(call checkfile,./project/tcl/program.tcl)
-	$(call checkfile,./hls/create_project.tcl)
 
 
 .PHONY: check_proj
 check_proj:
 	$(call checkfile,./project/$(PROJECT).xpr)
-	$(call checkdirectory,./hls/$(PROJECT),"Error: HLS project not generated")
 
 
 .PHONY: check_ip
@@ -43,11 +41,6 @@ check_hex:
 	$(call checkfile,./sw/firmware.hex)
 
 
-
-.PHONY: hls
-hls: check_vivado check_tcls
-	cd hls/ && make hls
-
 .PHONY: proj
 proj: check_vivado check_tcls
 	cd project/ && make proj
@@ -56,13 +49,6 @@ proj: check_vivado check_tcls
 .PHONY: ip
 ip: check_vivado check_proj	
 	cd project/ && make ip
-	
-.PHONY: update_cl
-update_cl: check_vivado check_proj check_ip	
-	cd hls/ && make hls
-	cd project/ && make update_cl
-	cd project/ && make prog
-	
 	
 .PHONY: compile
 compile: check_vivado check_proj check_ip
@@ -103,6 +89,5 @@ endef
 	
 .PHONY: clean
 clean:
-	cd hls/ && make clean
 	cd project/ && make clean
 	cd sw/ && make clean

@@ -15,8 +15,7 @@ module top
 	output [0:0] ddr3_cs_n, output ddr3_ras_n, output ddr3_cas_n, output ddr3_we_n,
 	output [2:0] ddr3_ba, output [13:0] ddr3_addr, output [0:0] ddr3_odt, output [1:0] ddr3_dm,
 	inout [1:0] ddr3_dqs_p, inout [1:0] ddr3_dqs_n, inout [15:0] ddr3_dq,
-	inout i2c_sda, output i2c_scl, output i2c_sda_pup, output i2c_scl_pup,
-	input spi_miso, output spi_mosi, output spi_clk, output spi_cs
+	inout i2c_sda, output i2c_scl, output i2c_sda_pup, output i2c_scl_pup
 ); 
 `else
 ;
@@ -29,7 +28,6 @@ module top
 	wire [0:0] ddr3_cs_n; wire ddr3_ras_n; wire ddr3_cas_n; wire ddr3_we_n;
 	wire [2:0] ddr3_ba; wire [13:0] ddr3_addr; wire [0:0] ddr3_odt; wire [1:0] ddr3_dm;
 	wire [1:0] ddr3_dqs_p; wire [1:0] ddr3_dqs_n; wire [15:0] ddr3_dq;
-	wire spi_miso; wire spi_mosi; wire spi_clk; wire spi_cs;
 	
 	reg [3:0] sw;
 	wire [3:0] led;
@@ -60,12 +58,6 @@ module top
 		#12_000_000;    
 	end
 	
-	reg [8:0] spi_mosi_reg;
-	initial spi_mosi_reg = 9'b101010101;
-	always @(negedge spi_clk)
-	   spi_mosi_reg = {spi_mosi_reg[7:0], spi_mosi_reg[8]}; 
-	assign spi_miso = spi_mosi_reg[8];
-
 	    ddr3 sdramddr3_0 (
 	    ddr3_reset_n,
 	    ddr3_ck_p,
@@ -209,23 +201,23 @@ module top
 	wire	[1:0]			uart_b_response;  
 	
 	
-	// Camera Module
-	wire	[31:0]			camera_axi_araddr;
-	wire				camera_axi_arvalid;
-	wire				camera_axi_arready;
-	wire	[31:0]			camera_axi_awaddr;
-	wire				camera_axi_awvalid;
-	wire				camera_axi_awready;
-	wire	[AXI_DATA_WIDTH-1:0]	camera_axi_rdata;
-	wire				camera_axi_rvalid;
-	wire				camera_axi_rready;
-	wire	[AXI_DATA_WIDTH-1:0]	camera_axi_wdata;
-	wire	[3:0]			camera_axi_wstrb;
-	wire				camera_axi_wvalid;
-	wire				camera_axi_wready;
-	wire				camera_b_ready;
-	wire				camera_b_valid;
-	wire	[1:0]			camera_b_response;  
+	// Sensor Module
+	wire	[31:0]			sensor_axi_araddr;
+	wire				sensor_axi_arvalid;
+	wire				sensor_axi_arready;
+	wire	[31:0]			sensor_axi_awaddr;
+	wire				sensor_axi_awvalid;
+	wire				sensor_axi_awready;
+	wire	[AXI_DATA_WIDTH-1:0]	sensor_axi_rdata;
+	wire				sensor_axi_rvalid;
+	wire				sensor_axi_rready;
+	wire	[AXI_DATA_WIDTH-1:0]	sensor_axi_wdata;
+	wire	[3:0]			sensor_axi_wstrb;
+	wire				sensor_axi_wvalid;
+	wire				sensor_axi_wready;
+	wire				sensor_b_ready;
+	wire				sensor_b_valid;
+	wire	[1:0]			sensor_b_response;  
 	
 	
 	// RISCV Program Loader
@@ -237,25 +229,6 @@ module top
 	wire				progloader_b_ready;
 	wire                		progloader_busy;
 	wire				reprogram = (sw[1] | progloader_busy);
-	
-	
-	// Custom RTL for Application Acceleration
-	wire	[31:0]			customlogic_axi_araddr;
-	wire				customlogic_axi_arvalid;
-	wire				customlogic_axi_arready;
-	wire	[31:0]			customlogic_axi_awaddr;
-	wire				customlogic_axi_awvalid;
-	wire				customlogic_axi_awready;
-	wire	[AXI_DATA_WIDTH-1:0]	customlogic_axi_rdata;
-	wire				customlogic_axi_rvalid;
-	wire				customlogic_axi_rready;
-	wire	[AXI_DATA_WIDTH-1:0]	customlogic_axi_wdata;
-	wire	[3:0]			customlogic_axi_wstrb;
-	wire				customlogic_axi_wvalid;
-	wire				customlogic_axi_wready;
-	wire				customlogic_b_ready;
-	wire				customlogic_b_valid;
-	wire	[1:0]			customlogic_b_response;
 	
 	// I2C Tristate Signals
 	wire 				i2c_sda_sel;
@@ -540,27 +513,23 @@ module top
 	    .rv_b_ready(rv_b_ready),
 	    .rv_b_valid(rv_b_valid),
 	    .rv_b_response(rv_b_response),
-	    .address_ranges({CUSTOMLOGIC_END_ADDRESS,CUSTOMLOGIC_START_ADDRESS,CAMERA_END_ADDRESS,CAMERA_START_ADDRESS,UART_END_ADDRESS,UART_START_ADDRESS,GPIO_END_ADDRESS,GPIO_START_ADDRESS, MEM_END_ADDRESS,MEM_START_ADDRESS}),
-	    .axi_araddr({customlogic_axi_araddr,camera_axi_araddr,uart_axi_araddr,gpio_axi_araddr,cachecontroller_axi_araddr}),
-	    .axi_arvalid({customlogic_axi_arvalid,camera_axi_arvalid,uart_axi_arvalid,gpio_axi_arvalid,cachecontroller_axi_arvalid}),
-	    .axi_arready({customlogic_axi_arready,camera_axi_arready,uart_axi_arready,gpio_axi_arready,cachecontroller_axi_arready}),
-	    .axi_awaddr({customlogic_axi_awaddr,camera_axi_awaddr,uart_axi_awaddr,gpio_axi_awaddr,cachecontroller_axi_awaddr}),
-	    .axi_awvalid({customlogic_axi_awvalid,camera_axi_awvalid,uart_axi_awvalid,gpio_axi_awvalid,cachecontroller_axi_awvalid}),
-	    .axi_awready({customlogic_axi_awready,camera_axi_awready,uart_axi_awready,gpio_axi_awready,cachecontroller_axi_awready}),
-	    .axi_rdata({customlogic_axi_rdata,camera_axi_rdata,uart_axi_rdata,gpio_axi_rdata,cachecontroller_axi_rdata}),
-	    .axi_rvalid({customlogic_axi_rvalid,camera_axi_rvalid,uart_axi_rvalid,gpio_axi_rvalid,cachecontroller_axi_rvalid}),
-	    .axi_rready({customlogic_axi_rready,camera_axi_rready,uart_axi_rready,gpio_axi_rready,cachecontroller_axi_rready}),
-	    .axi_wdata({customlogic_axi_wdata,camera_axi_wdata,uart_axi_wdata,gpio_axi_wdata,cachecontroller_axi_wdata}),
-	    .axi_wstrb({customlogic_axi_wstrb,camera_axi_wstrb,uart_axi_wstrb,gpio_axi_wstrb,cachecontroller_axi_wstrb}),
-	    .axi_wvalid({customlogic_axi_wvalid,camera_axi_wvalid,uart_axi_wvalid,gpio_axi_wvalid,cachecontroller_axi_wvalid}),
-	    .axi_wready({customlogic_axi_wready,camera_axi_wready,uart_axi_wready,gpio_axi_wready,cachecontroller_axi_wready}),
-	    .b_ready({customlogic_b_ready,camera_b_ready,uart_b_ready,gpio_b_ready,cachecontroller_b_ready}),
-	    .b_valid({customlogic_b_valid,camera_b_valid,uart_b_valid,gpio_b_valid,cachecontroller_b_valid}),
-	    .b_response({customlogic_b_response,camera_b_response,uart_b_response,gpio_b_response,cachecontroller_b_response}));
-
- 
- 
-
+	    .address_ranges({SENSOR_END_ADDRESS,SENSOR_START_ADDRESS,UART_END_ADDRESS,UART_START_ADDRESS,GPIO_END_ADDRESS,GPIO_START_ADDRESS, MEM_END_ADDRESS,MEM_START_ADDRESS}),
+	    .axi_araddr({sensor_axi_araddr,uart_axi_araddr,gpio_axi_araddr,cachecontroller_axi_araddr}),
+	    .axi_arvalid({sensor_axi_arvalid,uart_axi_arvalid,gpio_axi_arvalid,cachecontroller_axi_arvalid}),
+	    .axi_arready({sensor_axi_arready,uart_axi_arready,gpio_axi_arready,cachecontroller_axi_arready}),
+	    .axi_awaddr({sensor_axi_awaddr,uart_axi_awaddr,gpio_axi_awaddr,cachecontroller_axi_awaddr}),
+	    .axi_awvalid({sensor_axi_awvalid,uart_axi_awvalid,gpio_axi_awvalid,cachecontroller_axi_awvalid}),
+	    .axi_awready({sensor_axi_awready,uart_axi_awready,gpio_axi_awready,cachecontroller_axi_awready}),
+	    .axi_rdata({sensor_axi_rdata,uart_axi_rdata,gpio_axi_rdata,cachecontroller_axi_rdata}),
+	    .axi_rvalid({sensor_axi_rvalid,uart_axi_rvalid,gpio_axi_rvalid,cachecontroller_axi_rvalid}),
+	    .axi_rready({sensor_axi_rready,uart_axi_rready,gpio_axi_rready,cachecontroller_axi_rready}),
+	    .axi_wdata({sensor_axi_wdata,uart_axi_wdata,gpio_axi_wdata,cachecontroller_axi_wdata}),
+	    .axi_wstrb({sensor_axi_wstrb,uart_axi_wstrb,gpio_axi_wstrb,cachecontroller_axi_wstrb}),
+	    .axi_wvalid({sensor_axi_wvalid,uart_axi_wvalid,gpio_axi_wvalid,cachecontroller_axi_wvalid}),
+	    .axi_wready({sensor_axi_wready,uart_axi_wready,gpio_axi_wready,cachecontroller_axi_wready}),
+	    .b_ready({sensor_b_ready,uart_b_ready,gpio_b_ready,cachecontroller_b_ready}),
+	    .b_valid({sensor_b_valid,uart_b_valid,gpio_b_valid,cachecontroller_b_valid}),
+	    .b_response({sensor_b_response,uart_b_response,gpio_b_response,cachecontroller_b_response}));
 
 	mig_7series_0 mig_inst(
 		.ddr3_dq(ddr3_dq),
@@ -635,33 +604,29 @@ module top
 	assign i2c_sda_pup = 1'b1;
 	assign i2c_scl_pup = 1'b1;
 	IOBUF sd(.T(i2c_sda_sel),.IO(i2c_sda),.I(i2c_sda_out),.O(i2c_sda_in) );
-	camera_axi #(.I2C_ADDR(8'hEE)) cam
+	sensor_axi #(.I2C_ADDR(8'hEE)) sensor
   	(
 		.clk(ui_clk),
 		.rst(ui_rst | reprogram),
-		.axi_araddr(camera_axi_araddr),
-		.axi_arvalid(camera_axi_arvalid),
-		.axi_arready(camera_axi_arready),
-		.axi_awaddr(camera_axi_awaddr),
-		.axi_awvalid(camera_axi_awvalid),
-		.axi_awready(camera_axi_awready),
-		.axi_rdata(camera_axi_rdata),
-		.axi_rvalid(camera_axi_rvalid),
-		.axi_rready(camera_axi_rready),
-		.axi_wdata(camera_axi_wdata),
-		.axi_wvalid(camera_axi_wvalid),
-		.axi_wready(camera_axi_wready),
-		.b_ready(camera_b_ready),
-		.b_valid(camera_b_valid),
-		.b_response(camera_b_response),	
+		.axi_araddr(sensor_axi_araddr),
+		.axi_arvalid(sensor_axi_arvalid),
+		.axi_arready(sensor_axi_arready),
+		.axi_awaddr(sensor_axi_awaddr),
+		.axi_awvalid(sensor_axi_awvalid),
+		.axi_awready(sensor_axi_awready),
+		.axi_rdata(sensor_axi_rdata),
+		.axi_rvalid(sensor_axi_rvalid),
+		.axi_rready(sensor_axi_rready),
+		.axi_wdata(sensor_axi_wdata),
+		.axi_wvalid(sensor_axi_wvalid),
+		.axi_wready(sensor_axi_wready),
+		.b_ready(sensor_b_ready),
+		.b_valid(sensor_b_valid),
+		.b_response(sensor_b_response),	
 		.sda_in(i2c_sda_in),
 		.sda_out(i2c_sda_out),
 		.sda_sel(i2c_sda_sel),
-		.scl(i2c_scl),
-		.spi_clk(spi_clk),
-		.spi_miso(spi_miso),
-		.spi_mosi(spi_mosi),
-		.spi_cs(spi_cs)
+		.scl(i2c_scl)
 	);
 
 
@@ -686,32 +651,6 @@ module top
 		.utx(uart_tx),
 		.urx(uart_rx)
 	);
-
-
-	customlogic_axi_0 cl(
-		.ap_clk(ui_clk),
-		.ap_rst_n(~(ui_rst  | reprogram)),
-		.s_axi_hls_AWVALID(customlogic_axi_awvalid),
-		.s_axi_hls_AWREADY(customlogic_axi_awready),
-		.s_axi_hls_AWADDR(customlogic_axi_awaddr),
-		.s_axi_hls_WVALID(customlogic_axi_wvalid),
-		.s_axi_hls_WREADY(customlogic_axi_wready),
-		.s_axi_hls_WDATA(customlogic_axi_wdata),
-		.s_axi_hls_WSTRB(customlogic_axi_wstrb),
-		.s_axi_hls_ARVALID(customlogic_axi_arvalid),
-		.s_axi_hls_ARREADY(customlogic_axi_arready),
-		.s_axi_hls_ARADDR(customlogic_axi_araddr),
-		.s_axi_hls_RVALID(customlogic_axi_rvalid),
-		.s_axi_hls_RREADY(customlogic_axi_rready),
-		.s_axi_hls_RDATA(customlogic_axi_rdata),
-		.s_axi_hls_RRESP(),
-		.s_axi_hls_BVALID(customlogic_b_valid),
-		.s_axi_hls_BREADY(customlogic_b_ready),
-		.s_axi_hls_BRESP(customlogic_b_response),
-		.interrupt()
-	);
-
-
 endmodule
 
 

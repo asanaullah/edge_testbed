@@ -39,7 +39,7 @@ load: $(OUTPUT_NAME).hex
 	
 .PHONY: clean
 clean:
-	rm *.o
-	rm *.elf
-	rm *.hex
-	rm *.dump
+	rm -f *.o
+	rm -f *.elf
+	rm -f *.hex
+	rm -f *.dump

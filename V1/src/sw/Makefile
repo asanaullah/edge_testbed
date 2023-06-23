@@ -7,7 +7,7 @@ LINKER = cpu_linker.ld
 CROSS = riscv64-unknown-elf-
 CROSSCFLAGS = -O3 -Wno-int-conversion -march=$(CONFIG) -mabi=$(ABI) -ffreestanding -nostdlib
 CROSSLDFLAGS = -march=$(CONFIG) -mabi=$(ABI) -ffreestanding -nostdlib  -Wl,-M
-UART_PORT = ttyUSB1
+UART_PORT = ttyUSB0
 
 
 .PHONY: all

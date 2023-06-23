@@ -60,12 +60,16 @@ static void printi(int val)
     val = val*-1;
   }
 
-  int num[10];
+  int num[10] = {0,0,0,0,0,0,0,0,0,0};
 
   for(int i=0;i<10;i++)
   {
-    num[i] = val - 10*(val/10);
+    num[i] = val % 10; //- 10*(val/10);
     val = val/10;
+    if (val==0)
+    {
+      break;
+    }
   }
 
   int start = 0;
@@ -79,8 +83,6 @@ static void printi(int val)
       debug = digits[num[i-1]];
       start = 1;
     }
-    else
-      debug = 0;
   }
 }
 
@@ -113,11 +115,11 @@ static void printf(char *c, ...)
       case 'h': 
 		val = va_arg(lst, int); 
 		printi(val/100); 
-		putchar('.');     
+		prints(".");     
 		val = (val < 0)?(-1*val):val; 
 		remainder = val % 100; 
 		if(remainder < 10) 
-		  putchar('0');
+		  prints("0");
 		printi(remainder); 
 	break;
     }

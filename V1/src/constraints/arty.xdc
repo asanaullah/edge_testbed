@@ -63,11 +63,11 @@ set_property PACKAGE_PIN E3 [get_ports clk_i]
 set_property IOSTANDARD LVCMOS33 [get_ports clk_i]
 
 
-##USB-UART Interface
-set_property PACKAGE_PIN D10 [get_ports uart_tx]
-set_property IOSTANDARD LVCMOS33 [get_ports uart_tx]
-set_property PACKAGE_PIN A9 [get_ports uart_rx]
-set_property IOSTANDARD LVCMOS33 [get_ports uart_rx]
+##USB-UART Interface 
+set_property -dict { PACKAGE_PIN P17 IOSTANDARD LVCMOS33} [get_ports uart_tx]
+set_property -dict { PACKAGE_PIN R17 IOSTANDARD LVCMOS33} [get_ports uart_rx]
+# set_property PACKAGE_PIN A9 [get_ports uart_rx]
+# set_property IOSTANDARD LVCMOS33 [get_ports uart_rx]
 
 
 ##I2C Interface
